@@ -1,6 +1,7 @@
 package com.mybarber
 
 import SignUpScreen
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,20 +14,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.mybarber.navigation.AppNavGraph
 import com.mybarber.ui.theme.MyBarberTheme
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MyBarberTheme {
+                val navController = rememberNavController()
                 Scaffold { innerPadding ->
-                    SignUpScreen(
-                        {  },
-                        onContinueClick = {},
-                        Modifier.padding(innerPadding)
-                    )
+
+                   AppNavGraph(navController)
                 }
             }
         }

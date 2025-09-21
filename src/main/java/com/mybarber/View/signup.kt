@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    navController: NavController,
     onBackClick: () -> Unit,
     onContinueClick: (String) -> Unit,
     modifier: Modifier = Modifier
