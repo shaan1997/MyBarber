@@ -1,3 +1,4 @@
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,21 +10,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.mybarber.model_view.SignUpViewModel
+import com.mybarber.model_view.SnackbarViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     onBackClick: () -> Unit,
-    onContinueClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onContinueClick: (String) -> Unit
 ) {
-    var phoneNumber by remember { mutableStateOf("") }
+
+
+    val snackbarViewModel : SnackbarViewModel = viewModel(LocalContext.current as ComponentActivity)
+    val coroutineScope = rememberCoroutineScope()
+
+    val signUpViewModel : SignUpViewModel = viewModel()
 
     Column(
         modifier = Modifier
@@ -70,21 +80,34 @@ fun SignUpScreen(
 
         // Mobile Number TextField
         OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
+            value = signUpViewModel.phoneNumber,
+            onValueChange = { newVal ->
+                if(newVal.length <= signUpViewModel.maxLength){
+                    signUpViewModel.phoneNumber = newVal
+                }
+            },
             label = { Text("Mobile number") },
             singleLine = true,
+
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFFF2F4F7)),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone,)
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
         // Continue Button
         Button(
-            onClick = { onContinueClick(phoneNumber) },
+            onClick = {
+                 if(signUpViewModel.phoneNumber.isEmpty()){
+                     coroutineScope.launch {
+                         snackbarViewModel.showSnackbar("Please enter valid phone number")
+                     }
+                 } else {
+                     onContinueClick(signUpViewModel.phoneNumber)
+                 }
+
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),

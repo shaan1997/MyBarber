@@ -1,5 +1,6 @@
 package com.mybarber.navigation
 
+import OtpScreen
 import SignUpScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.mybarber.View.CreateProfileScreen
-import com.mybarber.View.OtpScreen
+import com.mybarber.View.dashboard.MainScreen
 import kotlinx.serialization.Serializable
 
 // Define your screens using @Serializable instead of sealed + route string
@@ -25,6 +26,9 @@ sealed interface Screen {
     @Serializable
     data class OtpScreen(val mobileNumber: String) : Screen
 
+    @Serializable
+    object Dashboard : Screen
+
 }
 
 
@@ -33,21 +37,21 @@ sealed interface Screen {
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Signup
+        startDestination = Screen.Dashboard
+        //startDestination = Screen.Signup
     ) {
         // Signup Screen
         composable<Screen.Signup> {
+
             SignUpScreen(
                 onBackClick = { navController.popBackStack() },
-                onContinueClick = { phoneNO -> navController.navigate(Screen.OtpScreen(phoneNO),) },
-                modifier = Modifier
+                onContinueClick = { phoneNO -> navController.navigate(Screen.OtpScreen(phoneNO),) }
             )
         }
 
         // Create Profile Screen
         composable<Screen.CreateProfile> {
             CreateProfileScreen(
-                navController = navController,
                 onContinue = {
                     //navController.navigate(Screen.NextScreen())
                 }
@@ -60,10 +64,25 @@ fun AppNavGraph(navController: NavHostController) {
                 mobileNumber = args.mobileNumber,
                 onBack = {
                     navController.popBackStack()
+                },
+                onContinue = {
+                    navController.navigate(route = Screen.CreateProfile)
                 }
-            ) { }
+            )
+        }
+
+        composable<Screen.Dashboard>{
+            MainScreen()
         }
 
 
     }
+
+//    @Composable
+//    NavHostBottom(navController, startDestination = "search") {
+//        composable("search") { MainScreen(navController) }
+//        composable("appointments") { /* AppointmentScreen() */ }
+//        composable("profile") { /* ProfileScreen() */ }
+//    }
+
 }

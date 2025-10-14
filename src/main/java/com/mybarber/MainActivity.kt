@@ -10,13 +10,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.mybarber.model_view.SnackbarViewModel
 import com.mybarber.navigation.AppNavGraph
 import com.mybarber.ui.theme.MyBarberTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -26,7 +34,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyBarberTheme {
                 val navController = rememberNavController()
-                Scaffold { innerPadding ->
+
+                val snackbarViewModel: SnackbarViewModel = viewModel()
+
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                val coroutineScope = rememberCoroutineScope()
+
+                LaunchedEffect(snackbarViewModel) {
+                    snackbarViewModel.snackbarEvents.collect { msg ->
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(msg)
+                        }
+                    }
+                }
+
+                Scaffold (
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                ){ innerPadding ->
 
                    AppNavGraph(navController)
                 }
