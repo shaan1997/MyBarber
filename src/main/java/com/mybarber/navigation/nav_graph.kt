@@ -12,6 +12,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.mybarber.View.CreateProfileScreen
 import com.mybarber.View.dashboard.MainScreen
+import com.mybarber.View.dashboard.SearchContent
+import com.mybarber.View.dashboard.screens.AppointmentScreen
 import kotlinx.serialization.Serializable
 
 // Define your screens using @Serializable instead of sealed + route string
@@ -78,11 +80,20 @@ fun AppNavGraph(navController: NavHostController) {
 
     }
 
-//    @Composable
-//    NavHostBottom(navController, startDestination = "search") {
-//        composable("search") { MainScreen(navController) }
-//        composable("appointments") { /* AppointmentScreen() */ }
-//        composable("profile") { /* ProfileScreen() */ }
-//    }
+}
+
+@Composable
+fun NavHostBottom(navController : NavHostController,  startDestination: String = "search") {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ){
+        composable("search") { SearchContent() }
+        composable("appointments") {  AppointmentScreen()  }
+        composable("profile") { /* ProfileScreen() */ }
+    }
+
 
 }
+
+

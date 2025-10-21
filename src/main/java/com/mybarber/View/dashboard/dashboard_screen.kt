@@ -2,6 +2,8 @@
 
 package com.mybarber.View.dashboard
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,35 +25,77 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.mybarber.R
+import com.mybarber.navigation.NavHostBottom
+import com.mybarber.navigation.Screen
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
+import java.util.Map
 
 @Composable
 fun MainScreen() {
+    val navController = rememberNavController()
+    var showExitDialog by remember { mutableStateOf(false) }
+
+
+   /* BackHandler {
+    val currentRoute = navController.currentDestination?.route
+        if(currentRoute == Screen.Dashboard.toString() || currentRoute == "search"){
+            showExitDialog = true
+        }
+    }*/
+
     Scaffold(
-        topBar = { SearchTopBar() },
-        bottomBar = { BottomNavigationBar() }
+        bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
-        SearchContent(Modifier.padding(innerPadding))
+        Box(modifier = Modifier.padding(innerPadding)) {
+            NavHostBottom(navController)
+        }
+//        SearchContent(Modifier.padding(innerPadding))
     }
+
+    ExitAppHandler(navController)
+
+   /* if (showExitDialog) {
+        val scope = rememberCoroutineScope()
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text("Exit App") },
+            text = { Text("Do you really want to exit?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showExitDialog = false
+                    // Close or minimize the app
+                    LaunchedEffect(Unit) {
+                        // Wait one frame
+                        yield()
+                        (context as? Activity)?.finishAffinity()
+                    }
+
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }*/
 }
 
-@Composable
-fun SearchTopBar() {
-    CenterAlignedTopAppBar(
-        title = { Text("Dashboard", fontSize = 22.sp, fontWeight = FontWeight.Bold) }
-//        actions = {
-//            IconButton(onClick = { /* open map */ }) {
-//                Icon(Icons.Default, contentDescription = "Map")
-//            }
-//        }
-    )
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -64,6 +108,10 @@ fun SearchContent(modifier: Modifier = Modifier) {
         BarberShop("Sharp Cuts", "4.5", "2.5km", R.drawable.barber_2),
         BarberShop("Style Masters", "4.9", "0.8km", R.drawable.barber_3),
         BarberShop("Grooming Lounge", "4.7", "1.5km", R.drawable.barber_4),
+        BarberShop("The Barber Shop", "4.8", "1.2km", R.drawable.barber_1),
+        BarberShop("Sharp Cuts", "4.5", "2.5km", R.drawable.barber_2),
+        BarberShop("Style Masters", "4.9", "0.8km", R.drawable.barber_3),
+        BarberShop("Grooming Lounge", "4.7", "1.5km", R.drawable.barber_4),
     )
 
     Column(
@@ -72,6 +120,20 @@ fun SearchContent(modifier: Modifier = Modifier) {
             .padding(16.dp)
     ) {
         // Search Box
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(bottom = 12.dp)
+
+        ){
+            Text("Dashboard", modifier = Modifier
+                .fillMaxWidth(),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+                )
+        }
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
@@ -166,7 +228,10 @@ fun BarberCard(shop: BarberShop) {
 }
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(navhostController: NavHostController) {
+//    Get Current navigation back stack Map.entry.**
+    val navBackStackEntry by navhostController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     val items = listOf("Search", "Appointments", "Profile")
     NavigationBar {
         items.forEach { label ->
@@ -179,9 +244,61 @@ fun BottomNavigationBar() {
                     }
                 },
                 label = { Text(label) },
-                selected = false,
-                onClick = { /* handle navigation */ }
+//                Determine if the item is selected by comparing routes
+                selected = currentDestination?.hierarchy?.any { it.route == label } == true,
+                onClick = { navhostController.navigate(label){
+                    // Pop up to the start of the graph to avoid building up a large stack of the same destinations
+                    popUpTo(navhostController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    // Avoid multiple copies of the same destination when reselecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
+                } }
             )
         }
     }
 }
+
+@Composable
+fun ExitAppHandler(navController: NavHostController) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var showExitDialog by remember { mutableStateOf(false) }
+
+    // Handle system back button
+    BackHandler {
+        val currentRoute = navController.currentDestination?.route
+        if(currentRoute == Screen.Dashboard.toString() || currentRoute == "search"){
+            showExitDialog = true
+        }
+    }
+
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text("Exit App") },
+            text = { Text("Do you really want to exit?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    // 1️⃣ Close dialog first
+                    showExitDialog = false
+
+                    // 2️⃣ Launch side-effect safely
+                    scope.launch {
+                        (context as? Activity)?.finishAffinity()
+                    }
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
+}
+
