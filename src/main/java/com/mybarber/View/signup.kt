@@ -1,6 +1,8 @@
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -9,12 +11,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -79,20 +84,43 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Mobile Number TextField
-        OutlinedTextField(
+       /* OutlinedTextField(
             value = signUpViewModel.phoneNumber,
             onValueChange = { newVal ->
                 if(newVal.length <= signUpViewModel.maxLength){
                     signUpViewModel.phoneNumber = newVal
                 }
             },
-            label = { Text("Mobile number") },
+            placeholder = { Text("Mobile number") },
             singleLine = true,
-
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFF2F4F7)),
+                .background(Color(0xFFE9E8E8))
+                .clip(RoundedCornerShape(20.dp)),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,  // 👈 removes grey background
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone,)
+        )*/
+
+        RoundedOutlinedTextField(
+            value = signUpViewModel.phoneNumber,
+            onValueChange = { newVal->
+                if(newVal.length <= signUpViewModel.maxLength){
+                signUpViewModel.phoneNumber = newVal
+            } },
+            hint = "Mobile number",
+            modifier = Modifier.fillMaxWidth(),
+            keyboardType = KeyboardType.Phone
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -133,3 +161,44 @@ fun SignUpScreen(
         )
     }
 }
+
+@Composable
+fun RoundedOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        textStyle = TextStyle(
+            fontSize = 17.sp,
+            letterSpacing = 0.2.em
+        ),
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFFF0F2F5), // custom background
+                        shape = RoundedCornerShape(12.dp) // fully rounded corners
+                    )
+                    .padding(horizontal = 16.dp, vertical = 18.dp)
+            ) {
+                // Show hint if text is empty
+                if (value.isEmpty()) {
+                    Text(
+                        text = hint,
+                        color = Color.Gray
+                    )
+                }
+                innerTextField()
+            }
+        }
+    )
+}
+

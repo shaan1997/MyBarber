@@ -39,8 +39,8 @@ sealed interface Screen {
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Dashboard
-        //startDestination = Screen.Signup
+      //  startDestination = Screen.Dashboard
+        startDestination = Screen.Signup
     ) {
         // Signup Screen
         composable<Screen.Signup> {
