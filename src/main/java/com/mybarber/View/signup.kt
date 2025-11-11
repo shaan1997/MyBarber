@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -168,16 +170,19 @@ fun RoundedOutlinedTextField(
     onValueChange: (String) -> Unit,
     hint: String = "",
     modifier: Modifier = Modifier,
+    isEnable: Boolean = true,
+    keyboardAction: ImeAction = ImeAction.Done,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        enabled = isEnable,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = keyboardAction),
         textStyle = TextStyle(
             fontSize = 17.sp,
-            letterSpacing = 0.2.em
+            letterSpacing = 0.05.em
         ),
         decorationBox = { innerTextField ->
             Box(

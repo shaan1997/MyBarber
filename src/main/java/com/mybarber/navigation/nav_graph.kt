@@ -1,5 +1,6 @@
 package com.mybarber.navigation
 
+import AppointmentsScreen
 import OtpScreen
 import SignUpScreen
 import androidx.compose.runtime.Composable
@@ -13,7 +14,6 @@ import androidx.navigation.toRoute
 import com.mybarber.View.CreateProfileScreen
 import com.mybarber.View.dashboard.MainScreen
 import com.mybarber.View.dashboard.SearchContent
-import com.mybarber.View.dashboard.screens.AppointmentScreen
 import kotlinx.serialization.Serializable
 
 // Define your screens using @Serializable instead of sealed + route string
@@ -39,7 +39,7 @@ sealed interface Screen {
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-      //  startDestination = Screen.Dashboard
+      //  startDestination = Screen.CreateProfile
         startDestination = Screen.Signup
     ) {
         // Signup Screen
@@ -55,7 +55,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable<Screen.CreateProfile> {
             CreateProfileScreen(
                 onContinue = {
-                    //navController.navigate(Screen.NextScreen())
+                    navController.navigate(Screen.Dashboard)
                 }
             )
         }
@@ -89,7 +89,7 @@ fun NavHostBottom(navController : NavHostController,  startDestination: String =
         startDestination = startDestination
     ){
         composable("search") { SearchContent() }
-        composable("appointments") {  AppointmentScreen()  }
+        composable("appointments") {  AppointmentsScreen()  }
         composable("profile") { /* ProfileScreen() */ }
     }
 
