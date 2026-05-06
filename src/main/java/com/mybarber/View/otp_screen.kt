@@ -1,5 +1,5 @@
-// imports you may need
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -14,12 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mybarber.R
 import com.mybarber.model_view.OtpViewModel
 import com.mybarber.model_view.SnackbarViewModel
 import kotlinx.coroutines.launch
@@ -32,35 +34,28 @@ fun OtpScreen(
     onBack: () -> Unit,
     onContinue: () -> Unit
 ) {
-
     val focusManager = LocalFocusManager.current
-
-    // join to get full OTP
-   // val otp = otpValues.joinToString("") { it.value }
-
     val snackbarViewModel : SnackbarViewModel = viewModel(LocalContext.current as ComponentActivity)
     val coroutineScope = rememberCoroutineScope()
-
     val otpViewModel : OtpViewModel = viewModel()
 
-    // autofocus first box when screen appears
     LaunchedEffect(Unit) { otpViewModel.focusRequesters[0].requestFocus() }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
             .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
          Column {
              Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                 // Back Arrow
                  IconButton(onClick = { onBack() }) {
                      Icon(
                          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                         contentDescription = "Back"
+                         contentDescription = stringResource(R.string.back),
+                         tint = MaterialTheme.colorScheme.onBackground
                      )
                  }
                  Spacer(modifier = Modifier.weight(1f))
@@ -69,24 +64,21 @@ fun OtpScreen(
                      contentAlignment = Alignment.Center
                  ) {
                      Text(
-                         text = "OTP Verification",
+                         text = stringResource(R.string.otp_verification_title),
                          fontWeight = FontWeight.Bold,
-                         fontSize = 20.sp
+                         fontSize = 20.sp,
+                         color = MaterialTheme.colorScheme.onBackground
                      )
                  }
              }
 
-             Spacer(modifier = Modifier.height(16.dp))
-
-
-
              Spacer(modifier = Modifier.height(32.dp))
 
-             // Label
              Text(
-                 text = "We have sent OTP to $mobileNumber",
+                 text = stringResource(R.string.otp_sent_to, mobileNumber),
                  fontSize = 18.sp,
-                 fontWeight = FontWeight.Bold
+                 fontWeight = FontWeight.Bold,
+                 color = MaterialTheme.colorScheme.onBackground
              )
 
              Spacer(modifier = Modifier.height(24.dp))
@@ -100,34 +92,26 @@ fun OtpScreen(
                          value = state.value,
                          onValueChange = { value ->
                              when {
-                                 // user cleared this field (delete)
                                  value.isEmpty() -> {
                                      state.value = ""
                                      if (index > 0) {
-                                         // move focus to previous box
                                          otpViewModel.focusRequesters[index - 1].requestFocus()
                                      }
                                  }
-
-                                 // user typed a single digit
                                  value.length == 1 && value[0].isDigit() -> {
                                      state.value = value
                                      if (index < otpViewModel.otpLength - 1) {
                                          otpViewModel.focusRequesters[index + 1].requestFocus()
                                      } else {
-                                         // last digit entered -> hide keyboard / clear focus
                                          focusManager.clearFocus()
                                      }
                                  }
-
-                                 // user pasted multiple characters into one box -> distribute them
                                  value.length > 1 -> {
                                      val digits = value.filter { it.isDigit() }
                                      digits.forEachIndexed { i, ch ->
                                          val pos = index + i
                                          if (pos < otpViewModel.otpLength) otpViewModel.otpValues[pos].value = ch.toString()
                                      }
-                                     // move focus to the box after the last filled (or clear)
                                      val next = min(index + digits.length, otpViewModel.otpLength - 1)
                                      if (next < otpViewModel.otpLength - 1) otpViewModel.focusRequesters[next + 1].requestFocus()
                                      else focusManager.clearFocus()
@@ -139,10 +123,8 @@ fun OtpScreen(
                              .width(52.dp)
                              .focusRequester(otpViewModel.focusRequesters[index])
                              .onKeyEvent { keyEvent ->
-                                 // catch Backspace when this field is already empty
                                  if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Backspace) {
                                      if (state.value.isEmpty() && index > 0) {
-                                         // clear previous and move focus back
                                          otpViewModel.otpValues[index - 1].value = ""
                                          otpViewModel.focusRequesters[index - 1].requestFocus()
                                          true
@@ -150,7 +132,16 @@ fun OtpScreen(
                                  } else false
                              },
                          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                         textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
+                         textStyle = LocalTextStyle.current.copy(
+                             textAlign = TextAlign.Center,
+                             color = MaterialTheme.colorScheme.onSurface
+                         ),
+                         colors = OutlinedTextFieldDefaults.colors(
+                             focusedBorderColor = MaterialTheme.colorScheme.primary,
+                             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                             focusedContainerColor = MaterialTheme.colorScheme.surface,
+                             unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                         )
                      )
                  }
              }
@@ -164,18 +155,18 @@ fun OtpScreen(
                     coroutineScope.launch {
                         snackbarViewModel.showSnackbar(message = "Please enter valid otp")
                     }
-
                 }
-
-                      },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF)) // iOS Blue
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
             Text(
-                text = "Continue",
-                color = Color.White,
+                text = stringResource(R.string.continue_btn),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )

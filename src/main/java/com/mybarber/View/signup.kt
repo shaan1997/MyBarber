@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,7 +7,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,17 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import com.mybarber.R
 import com.mybarber.model_view.SignUpViewModel
 import com.mybarber.model_view.SnackbarViewModel
 import kotlinx.coroutines.launch
@@ -35,117 +34,85 @@ fun SignUpScreen(
     onBackClick: () -> Unit,
     onContinueClick: (String) -> Unit
 ) {
-
-
     val snackbarViewModel : SnackbarViewModel = viewModel(LocalContext.current as ComponentActivity)
     val coroutineScope = rememberCoroutineScope()
-
     val signUpViewModel : SignUpViewModel = viewModel()
+    val invalidPhoneError = stringResource(R.string.error_invalid_phone)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .systemBarsPadding(),
-
     ) {
         Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-            // Back Arrow
             IconButton(onClick = { onBackClick() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.back),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Signup",
+                    text = stringResource(R.string.signup_title),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Label
         Text(
-            text = "Enter your mobile number",
+            text = stringResource(R.string.enter_mobile_number),
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-
-        // Mobile Number TextField
-       /* OutlinedTextField(
-            value = signUpViewModel.phoneNumber,
-            onValueChange = { newVal ->
-                if(newVal.length <= signUpViewModel.maxLength){
-                    signUpViewModel.phoneNumber = newVal
-                }
-            },
-            placeholder = { Text("Mobile number") },
-            singleLine = true,
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFE9E8E8))
-                .clip(RoundedCornerShape(20.dp)),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,  // 👈 removes grey background
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone,)
-        )*/
 
         RoundedOutlinedTextField(
             value = signUpViewModel.phoneNumber,
             onValueChange = { newVal->
                 if(newVal.length <= signUpViewModel.maxLength){
-                signUpViewModel.phoneNumber = newVal
-            } },
-            hint = "Mobile number",
+                    signUpViewModel.phoneNumber = newVal
+                }
+            },
+            hint = stringResource(R.string.mobile_number_hint),
             modifier = Modifier.fillMaxWidth(),
             keyboardType = KeyboardType.Phone
         )
 
         Spacer(modifier = Modifier.weight(1f))
-        // Continue Button
+        
         Button(
             onClick = {
                  if(signUpViewModel.phoneNumber.isEmpty()){
                      coroutineScope.launch {
-                         snackbarViewModel.showSnackbar("Please enter valid phone number")
+                         snackbarViewModel.showSnackbar(invalidPhoneError)
                      }
                  } else {
                      onContinueClick(signUpViewModel.phoneNumber)
                  }
-
-                      },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF)) // iOS Blue
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
             Text(
-                text = "Continue",
-                color = Color.White,
+                text = stringResource(R.string.continue_btn),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -153,11 +120,10 @@ fun SignUpScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Terms & Privacy Text
         Text(
-            text = "By continuing, you agree to our Terms of Service and Privacy Policy.",
+            text = stringResource(R.string.terms_and_privacy),
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -180,25 +146,29 @@ fun RoundedOutlinedTextField(
         singleLine = true,
         enabled = isEnable,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = keyboardAction),
-        textStyle = TextStyle(
-            fontSize = 17.sp,
-            letterSpacing = 0.05.em
+        textStyle = LocalTextStyle.current.copy(
+            fontSize  = 17.sp,
+            letterSpacing = 0.05.em,
+            color = MaterialTheme.colorScheme.onSurface,
         ),
         decorationBox = { innerTextField ->
             Box(
                 modifier = modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color(0xFFF0F2F5), // custom background
-                        shape = RoundedCornerShape(12.dp) // fully rounded corners
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 18.dp)
             ) {
-                // Show hint if text is empty
                 if (value.isEmpty()) {
                     Text(
                         text = hint,
-                        color = Color.Gray
+                        style = LocalTextStyle.current.copy(
+                            fontSize  = 17.sp,
+                            letterSpacing = 0.05.em,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                        ),
                     )
                 }
                 innerTextField()
@@ -206,4 +176,3 @@ fun RoundedOutlinedTextField(
         }
     )
 }
-

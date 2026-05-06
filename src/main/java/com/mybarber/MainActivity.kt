@@ -1,18 +1,14 @@
 package com.mybarber
 
-import SignUpScreen
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -32,13 +28,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyBarberTheme {
+            // Removed the hardcoded 'darkTheme = false' so it follows the system setting
+            MyBarberTheme(dynamicColor = false) {
                 val navController = rememberNavController()
-
                 val snackbarViewModel: SnackbarViewModel = viewModel()
-
                 val snackbarHostState = remember { SnackbarHostState() }
-
                 val coroutineScope = rememberCoroutineScope()
 
                 LaunchedEffect(snackbarViewModel) {
@@ -52,7 +46,6 @@ class MainActivity : ComponentActivity() {
                 Scaffold (
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ){ innerPadding ->
-
                    AppNavGraph(navController)
                 }
             }
@@ -62,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
+    androidx.compose.material3.Text(
         text = "Hello $name!",
         modifier = modifier
     )

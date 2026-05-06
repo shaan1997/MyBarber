@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -101,8 +102,15 @@ fun MainScreen() {
 @Composable
 fun SearchContent(modifier: Modifier = Modifier) {
     var query by remember { mutableStateOf("") }
-    val services = listOf("Hair cut", "Beard Trim", "Hair Color")
-    val sortFilters = listOf("Rating", "Distance")
+    val services = listOf(
+        stringResource(R.string.hair_cut),
+        stringResource(R.string.beard_trim),
+        stringResource(R.string.hair_color)
+    )
+    val sortFilters = listOf(
+        stringResource(R.string.rating),
+        stringResource(R.string.distance)
+    )
     val barbers = listOf(
         BarberShop("The Barber Shop", "4.8", "1.2km", R.drawable.barber_1),
         BarberShop("Sharp Cuts", "4.5", "2.5km", R.drawable.barber_2),
@@ -128,7 +136,7 @@ fun SearchContent(modifier: Modifier = Modifier) {
                 .padding(bottom = 12.dp)
 
         ){
-            Text("Dashboard", modifier = Modifier
+            Text(stringResource(R.string.dashboard_title), modifier = Modifier
                 .fillMaxWidth(),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
@@ -138,7 +146,7 @@ fun SearchContent(modifier: Modifier = Modifier) {
             value = query,
             onValueChange = { query = it },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            placeholder = { Text("Search") },
+            placeholder = { Text(stringResource(R.string.search_hint)) },
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,8 +171,8 @@ fun SearchContent(modifier: Modifier = Modifier) {
                         trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) }
                     )
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        DropdownMenuItem(text = { Text("High to Low") }, onClick = { expanded = false })
-                        DropdownMenuItem(text = { Text("Low to High") }, onClick = { expanded = false })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.high_to_low)) }, onClick = { expanded = false })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.low_to_high)) }, onClick = { expanded = false })
                     }
                 }
             }
@@ -232,15 +240,19 @@ fun BottomNavigationBar(navhostController: NavHostController) {
 //    Get Current navigation back stack Map.entry.**
     val navBackStackEntry by navhostController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val items = listOf("Search", "Appointments", "Profile")
+    val items = listOf(
+        stringResource(R.string.search_hint),
+        stringResource(R.string.appointments_label),
+        stringResource(R.string.profile_label)
+    )
     NavigationBar {
         items.forEach { label ->
             NavigationBarItem(
                 icon = {
                     when (label) {
-                        "Search" -> Icon(Icons.Default.Search, contentDescription = label)
-                        "Appointments" -> Icon(Icons.Default.CalendarToday, contentDescription = label)
-                        "Profile" -> Icon(Icons.Default.Person, contentDescription = label)
+                        stringResource(R.string.search_hint) -> Icon(Icons.Default.Search, contentDescription = label)
+                        stringResource(R.string.appointments_label) -> Icon(Icons.Default.CalendarToday, contentDescription = label)
+                        stringResource(R.string.profile_label) -> Icon(Icons.Default.Person, contentDescription = label)
                     }
                 },
                 label = { Text(label) },
@@ -278,8 +290,8 @@ fun ExitAppHandler(navController: NavHostController) {
     if (showExitDialog) {
         AlertDialog(
             onDismissRequest = { showExitDialog = false },
-            title = { Text("Exit App") },
-            text = { Text("Do you really want to exit?") },
+            title = { Text(stringResource(R.string.exit_app_title)) },
+            text = { Text(stringResource(R.string.exit_app_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     // 1️⃣ Close dialog first
@@ -290,15 +302,14 @@ fun ExitAppHandler(navController: NavHostController) {
                         (context as? Activity)?.finishAffinity()
                     }
                 }) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExitDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
                 }
             }
         )
     }
 }
-

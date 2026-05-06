@@ -1,3 +1,49 @@
 <resources>
     <string name="app_name">My Barber</string>
+    <string name="continue_btn">Continue</string>
+    <string name="back">Back</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Signup Screen -->
+    <string name="signup_title">Signup</string>
+    <string name="enter_mobile_number">Enter your mobile number</string>
+    <string name="mobile_number_hint">Mobile number</string>
+    <string name="error_invalid_phone">Please enter valid phone number</string>
+    <string name="terms_and_privacy">By continuing, you agree to our Terms of Service and Privacy Policy.</string>
+
+    <!-- OTP Screen -->
+    <string name="otp_verification_title">OTP Verification</string>
+    <string name="otp_sent_to">We have sent OTP to %1$s</string>
+    <string name="error_invalid_otp">Please enter valid otp</string>
+
+    <!-- Create Profile Screen -->
+    <string name="create_profile_title">Create Profile</string>
+    <string name="first_name_hint">First name</string>
+    <string name="last_name_hint">Last name</string>
+    <string name="email_hint">Email ID</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="search_hint">Search</string>
+    <string name="appointments_label">Appointments</string>
+    <string name="profile_label">Profile</string>
+    <string name="hair_cut">Hair cut</string>
+    <string name="beard_trim">Beard Trim</string>
+    <string name="hair_color">Hair Color</string>
+    <string name="rating">Rating</string>
+    <string name="distance">Distance</string>
+    <string name="high_to_low">High to Low</string>
+    <string name="low_to_high">Low to High</string>
+    <string name="exit_app_title">Exit App</string>
+    <string name="exit_app_message">Do you really want to exit?</string>
+
+    <!-- Appointment Screen -->
+    <string name="upcoming_appointments">Upcoming Appointments</string>
+    <string name="past_appointments">Past Appointments</string>
+    <string name="view_details">View Details</string>
+    <string name="rebook">Rebook</string>
+    <string name="review">Review</string>
 </resources>

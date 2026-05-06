@@ -1,8 +1,6 @@
 package com.mybarber.View
 
-import RoundedOutlinedTextField
 import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -24,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import com.mybarber.R
 import com.mybarber.model_view.CreateProfileViewModel
 import java.util.Date
 import java.util.Locale
@@ -34,64 +32,35 @@ import java.util.Locale
 fun CreateProfileScreen(
     onContinue: () -> Unit = {}
 ) {
-
-
     val createProfileViewModel : CreateProfileViewModel = viewModel()
 
-    if(createProfileViewModel.showDatePicker.value){
-        //val calendar = Calendar.getInstance();
-        val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
 
-        DatePickerDialog(
-            onDismissRequest = { createProfileViewModel.showDatePicker.value = false },
-            {
-                TextButton(onClick = {
-                   // onDateSelected(datePickerState.selectedDateMillis)
-                    datePickerState.selectedDateMillis?.let {
-                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                        createProfileViewModel.dob.value = formatter.format(Date(it))   // format the selected date
-                    }
-                    createProfileViewModel.showDatePicker.value = false
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { createProfileViewModel.showDatePicker.value = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Title
         Text(
-            text = "Create Profile",
+            text = stringResource(R.string.create_profile_title),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // First Name
-
         RoundedOutlinedTextField(
             value = createProfileViewModel.firstName.value,
             onValueChange = { newVal->
                 createProfileViewModel.firstName.value = newVal
-                            },
-            hint = "First name",
+            },
+            hint = stringResource(R.string.first_name_hint),
             modifier = Modifier.fillMaxWidth(),
             keyboardType = KeyboardType.Text,
             keyboardAction = ImeAction.Next
@@ -99,75 +68,43 @@ fun CreateProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Last Name
-//        OutlinedTextField(
-//            value = createProfileViewModel.lastName.value,
-//            onValueChange = { createProfileViewModel.lastName.value = it },
-//            placeholder = { Text("Last name") },
-//            singleLine = true,
-//            modifier = Modifier.fillMaxWidth()
-//        )
-
         RoundedOutlinedTextField(
             value = createProfileViewModel.lastName.value,
             onValueChange = { newVal->
                 createProfileViewModel.lastName.value = newVal
             },
-            hint = "Last name",
+            hint = stringResource(R.string.last_name_hint),
             modifier = Modifier.fillMaxWidth(),
-            keyboardType = KeyboardType.Text
+            keyboardType = KeyboardType.Text,
+            keyboardAction = ImeAction.Done
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Date of Birth
-  //      OutlinedTextField(
-//            value = createProfileViewModel.dob.value,
-//            onValueChange = { createProfileViewModel.dob.value = it },
-//            placeholder = { Text("Date of birth") },
-//            singleLine = true,
-//            enabled = false,
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//            modifier = Modifier.
-//            fillMaxWidth().
-//            clickable(onClick = {
-//                createProfileViewModel.showDatePicker.value = true
-//            })
-//        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFF1F5F9), RoundedCornerShape(8.dp))
-                .clickable { createProfileViewModel.showDatePicker.value = true } // ← clickable wrapper
-        ){
-            RoundedOutlinedTextField(
-                value = createProfileViewModel.dob.value,
-                isEnable = false,
-                onValueChange = { newVal->
-                    createProfileViewModel.dob.value = newVal
-                },
-                hint = "Date of birth",
-                modifier = Modifier.fillMaxWidth(),
-                keyboardType = KeyboardType.Number,
-            )
-        }
-
-
-
+        RoundedOutlinedTextField(
+            value = createProfileViewModel.email.value,
+            onValueChange = { newVal->
+                createProfileViewModel.email.value = newVal
+            },
+            hint = stringResource(R.string.email_hint),
+            modifier = Modifier.fillMaxWidth(),
+            keyboardType = KeyboardType.Email,
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Continue Button
         Button(
             onClick = onContinue,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
-            Text(text = "Continue", fontSize = 16.sp)
+            Text(text = stringResource(R.string.continue_btn), fontSize = 16.sp)
         }
-
     }
 }
 
@@ -178,32 +115,39 @@ fun RoundedOutlinedTextField(
     onValueChange: (String) -> Unit,
     hint: String = "",
     modifier: Modifier = Modifier,
+    isEnable: Boolean = true,
+    keyboardAction: ImeAction = ImeAction.Done,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        enabled = isEnable,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = keyboardAction),
         textStyle = TextStyle(
             fontSize = 17.sp,
-            letterSpacing = 0.2.em
+            letterSpacing = 0.05.em,
+            color = MaterialTheme.colorScheme.onSurface
         ),
         decorationBox = { innerTextField ->
             Box(
                 modifier = modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color(0xFFF0F2F5), // custom background
-                        shape = RoundedCornerShape(12.dp) // fully rounded corners
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 18.dp)
             ) {
-                // Show hint if text is empty
                 if (value.isEmpty()) {
                     Text(
                         text = hint,
-                        color = Color.Gray
+                        style = TextStyle(
+                            fontSize = 17.sp,
+                            letterSpacing = 0.05.em,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        )
                     )
                 }
                 innerTextField()
