@@ -28,6 +28,12 @@
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>
     <string name="search_hint">Search</string>
+    <string name="search_title">Search</string>
+    <string name="search_for_barbers">Search for barbers</string>
+    <string name="view_label">View</string>
+    <string name="combine">Combine</string>
+    <string name="barbers">Barbers</string>
+    <string name="salons">Salons</string>
     <string name="appointments_label">Appointments</string>
     <string name="profile_label">Profile</string>
     <string name="hair_cut">Hair cut</string>
@@ -46,4 +52,65 @@
     <string name="view_details">View Details</string>
     <string name="rebook">Rebook</string>
     <string name="review">Review</string>
+    <string name="leave_review">Leave a review</string>
+    <string name="rate_your_experience">Rate Your Experience</string>
+    <string name="write_your_review_hint">Write your review...</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="popular_barbers">Popular Barbers</string>
+    <string name="haircut">Haircut</string>
+    <string name="beard_trim_chip">Beard Trim</string>
+    <string name="shaving">Shaving</string>
+    <string name="massage">Massage</string>
+
+    <!-- Barber Profile Screen -->
+    <string name="barber_profile_title">Barber Profile</string>
+    <string name="contact_label">Contact</string>
+    <string name="services_label">Services</string>
+    <string name="hours_label">Hours</string>
+    <string name="reviews_label">Reviews</string>
+    <string name="gallery_label">Gallery</string>
+    <string name="reviews_count">%1$d reviews</string>
+    <string name="closed">Closed</string>
+    <!-- Booking Screen -->
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+    <string name="select_services">Select Services</string>
+    <string name="book">Book</string>
+    <string name="book_now">Book Now</string>
+    <string name="book_with">Book with %1$s</string>
+    <string name="select_your_barber">Select Your Barber</string>
+    <!-- Profile Screen -->
+    <string name="account_label">Account</string>
+    <string name="payment_methods">Payment methods</string>
+    <string name="booking_history">Booking history</string>
+    <string name="settings_label">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="language">Language</string>
+    <string name="help">Help</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirm_title">Logout</string>
+    <string name="logout_confirm_message">Are you sure you want to logout?</string>
+    <string name="member_since">Member since %1$d</string>
+    <!-- Booking Confirmed Screen -->
+    <string name="booking_confirmed_title">Booking Confirmed</string>
+    <string name="you_are_all_set">You\'re all set!</string>
+    <string name="booking_confirmation_msg">Your appointment with %1$s is confirmed for a stylish %2$s.</string>
+    <string name="appointment_details_label">Appointment Details</string>
+    <string name="barber_label">Barber</string>
+    <string name="service_label">Service</string>
+    <string name="date_label">Date</string>
+    <string name="time_label">Time</string>
+    <string name="price_label">Price</string>
+    <string name="view_appointment">View Appointment</string>
+    <string name="cancel_booking">Cancel Booking</string>
+    <!-- Upcoming Appointment Screen -->
+    <string name="upcoming_appointment_title">Upcoming Appointment</string>
+    <string name="service_section">Service</string>
+    <string name="date_time_section">Date &amp; Time</string>
+    <string name="location_section">Location</string>
+    <string name="payment_section">Payment</string>
+    <string name="edit_appointment">Edit Appointment</string>
+    <string name="cancel_appointment">Cancel Appointment</string>
+    <string name="barber_role">Barber</string>
 </resources>

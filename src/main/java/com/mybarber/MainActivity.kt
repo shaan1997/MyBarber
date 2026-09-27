@@ -17,8 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.mybarber.core.PreferenceManager
+import com.mybarber.core.SnackbarManager
 import com.mybarber.model_view.SnackbarViewModel
 import com.mybarber.navigation.AppNavGraph
+import com.mybarber.navigation.Screen
 import com.mybarber.ui.theme.MyBarberTheme
 import kotlinx.coroutines.launch
 
@@ -34,6 +37,13 @@ class MainActivity : ComponentActivity() {
                 val snackbarViewModel: SnackbarViewModel = viewModel()
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
+                val preferenceManager = remember { PreferenceManager(this) }
+
+                val startDestination = if (preferenceManager.isProfileCreated()) {
+                    Screen.Dashboard
+                } else {
+                    Screen.Signup
+                }
 
                 LaunchedEffect(snackbarViewModel) {
                     snackbarViewModel.snackbarEvents.collect { msg ->
@@ -46,7 +56,16 @@ class MainActivity : ComponentActivity() {
                 Scaffold (
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ){ innerPadding ->
-                   AppNavGraph(navController)
+                   AppNavGraph(
+                       navController = navController,
+                       startDestination = startDestination,
+                       onProfileCreated = {
+                           preferenceManager.setProfileCreated(true)
+                       },
+                       onLogout = {
+                           preferenceManager.setProfileCreated(false)
+                       }
+                   )
                 }
             }
         }
